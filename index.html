@@ -1,928 +1,1141 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Digital Market PI — Marketplace Africaine</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script src="https://sdk.minepi.com/pi-sdk.js"></script>
-<style>
-  :root {
-    --pi-deep: #1a0a2e;
-    --pi-dark: #120820;
-    --pi-purple: #6c2bd9;
-    --pi-violet: #8b45f0;
-    --gold: #f5c842;
-    --gold-dim: #c9a227;
-    --cream: #fdf6e3;
-    --text: #e8dff5;
-    --muted: #9b8ab5;
-    --card-bg: rgba(108,43,217,0.08);
-    --border: rgba(108,43,217,0.25);
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digital Market PI — Marketplace Africaine</title>
+  <meta name="description" content="Marketplace Africaine avec Pi Network. Achetez des ebooks, formations et ressources digitales en Pi Coin.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+  <style>
+    :root {
+      --bg: #120820;
+      --bg-2: #1a0a2e;
+      --panel: rgba(108, 43, 217, 0.09);
+      --panel-strong: rgba(108, 43, 217, 0.18);
+      --border: rgba(140, 118, 222, 0.28);
+      --purple: #6c2bd9;
+      --purple-2: #8b45f0;
+      --gold: #f5c842;
+      --gold-deep: #d7a11f;
+      --gold-soft: rgba(245, 200, 66, 0.12);
+      --text: #f5ecff;
+      --muted: #c2b6d9;
+      --success: #2ac97a;
+      --shadow: 0 18px 48px rgba(35, 13, 77, 0.45);
+    }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: 'DM Sans', sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(108,43,217,0.28), transparent 35%),
+        radial-gradient(circle at bottom right, rgba(245,200,66,0.09), transparent 25%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
 
-  body {
-    background: var(--pi-dark);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 32px 32px;
+      mask-image: radial-gradient(circle at center, black 35%, transparent 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
 
-  /* Background mesh */
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background:
-      radial-gradient(ellipse 60% 50% at 20% 10%, rgba(108,43,217,0.18) 0%, transparent 60%),
-      radial-gradient(ellipse 40% 40% at 80% 80%, rgba(245,200,66,0.07) 0%, transparent 60%);
-    pointer-events: none;
-    z-index: 0;
-  }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; }
+    button { font: inherit; }
 
-  /* ── HEADER ── */
-  header {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: rgba(18,8,32,0.92);
-    backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--border);
-    padding: 0 20px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
+    .container {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
 
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-family: 'Playfair Display', serif;
-    font-weight: 900;
-    font-size: 1.15rem;
-    letter-spacing: -0.02em;
-  }
-  .logo-pi {
-    width: 32px; height: 32px;
-    background: linear-gradient(135deg, var(--pi-purple), var(--pi-violet));
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.9rem; font-weight: 700; color: #fff;
-    font-family: 'DM Sans', sans-serif;
-  }
-  .logo span { color: var(--gold); }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 25;
+      backdrop-filter: blur(16px);
+      background: rgba(18, 8, 32, 0.82);
+      border-bottom: 1px solid var(--border);
+    }
 
-  #connect-btn {
-    background: linear-gradient(135deg, var(--pi-purple), var(--pi-violet));
-    color: #fff;
-    border: none;
-    padding: 8px 18px;
-    border-radius: 20px;
-    font-size: 0.82rem;
-    font-weight: 600;
-    font-family: 'DM Sans', sans-serif;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex; align-items: center; gap: 6px;
-  }
-  #connect-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(108,43,217,0.4); }
-  #connect-btn.connected {
-    background: linear-gradient(135deg, #1a6b3a, #27a85a);
-    gap: 5px;
-  }
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      min-height: 68px;
+      gap: 16px;
+    }
 
-  /* ── HERO ── */
-  .hero {
-    position: relative;
-    z-index: 1;
-    padding: 48px 20px 36px;
-    text-align: center;
-  }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      font-size: clamp(1rem, 2vw, 1.35rem);
+    }
 
-  .hero-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(245,200,66,0.1);
-    border: 1px solid rgba(245,200,66,0.3);
-    border-radius: 20px;
-    padding: 5px 14px;
-    font-size: 0.75rem;
-    color: var(--gold);
-    font-weight: 500;
-    margin-bottom: 20px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-  }
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--purple), var(--purple-2));
+      display: grid;
+      place-items: center;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      box-shadow: 0 10px 26px rgba(108, 43, 217, 0.45);
+    }
 
-  .hero h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.1rem;
-    font-weight: 900;
-    line-height: 1.1;
-    margin-bottom: 14px;
-    letter-spacing: -0.02em;
-  }
-  .hero h1 em {
-    font-style: normal;
-    background: linear-gradient(90deg, var(--gold), #e8a825);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
+    .brand strong {
+      color: white;
+      font-weight: inherit;
+    }
 
-  .hero p {
-    color: var(--muted);
-    font-size: 0.95rem;
-    line-height: 1.6;
-    max-width: 320px;
-    margin: 0 auto;
-  }
+    .brand span {
+      color: var(--gold);
+      font-weight: inherit;
+    }
 
-  /* ── STATS BAR ── */
-  .stats-bar {
-    position: relative; z-index: 1;
-    display: flex;
-    justify-content: center;
-    gap: 0;
-    margin: 0 20px 40px;
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    overflow: hidden;
-  }
-  .stat {
-    flex: 1;
-    padding: 14px 10px;
-    text-align: center;
-    border-right: 1px solid var(--border);
-  }
-  .stat:last-child { border-right: none; }
-  .stat-num {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: var(--gold);
-  }
-  .stat-label {
-    font-size: 0.68rem;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-top: 2px;
-  }
+    .connect-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-width: 170px;
+      padding: 10px 18px;
+      border: 0;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--purple), var(--purple-2));
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 10px 26px rgba(108, 43, 217, 0.38);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
 
-  /* ── SECTION TITLE ── */
-  .section-header {
-    position: relative; z-index: 1;
-    padding: 0 20px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .section-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.25rem;
-    font-weight: 700;
-  }
-  .section-tag {
-    font-size: 0.72rem;
-    color: var(--gold);
-    background: rgba(245,200,66,0.1);
-    border: 1px solid rgba(245,200,66,0.2);
-    padding: 3px 10px;
-    border-radius: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
+    .connect-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 30px rgba(108, 43, 217, 0.45);
+    }
 
-  /* ── PRODUCT CARDS ── */
-  .products {
-    position: relative; z-index: 1;
-    padding: 0 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    margin-bottom: 40px;
-  }
+    .connect-btn.connected {
+      background: linear-gradient(135deg, #115d3a, #27a85a);
+      box-shadow: 0 12px 24px rgba(39, 168, 90, 0.28);
+    }
 
-  .card {
-    background: linear-gradient(145deg, rgba(108,43,217,0.1), rgba(26,10,46,0.6));
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    overflow: hidden;
-    transition: transform 0.2s, box-shadow 0.2s;
-    position: relative;
-  }
-  .card:active { transform: scale(0.98); }
+    .hero {
+      padding: 64px 0 40px;
+    }
 
-  .card-featured {
-    border-color: rgba(245,200,66,0.35);
-    background: linear-gradient(145deg, rgba(245,200,66,0.07), rgba(108,43,217,0.12));
-  }
-  .card-featured::before {
-    content: '★ FEATURED';
-    position: absolute;
-    top: 14px; right: 14px;
-    background: var(--gold);
-    color: #1a0a2e;
-    font-size: 0.6rem;
-    font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 6px;
-    letter-spacing: 0.06em;
-    z-index: 2;
-  }
+    .hero-shell {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 28px;
+      align-items: center;
+    }
 
-  .card-inner {
-    padding: 20px;
-    display: flex;
-    gap: 16px;
-    align-items: flex-start;
-  }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(245, 200, 66, 0.1);
+      border: 1px solid rgba(245, 200, 66, 0.28);
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
 
-  .card-cover {
-    width: 72px;
-    height: 96px;
-    border-radius: 10px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    position: relative;
-    overflow: hidden;
-  }
-  .cover-1 { background: linear-gradient(135deg, #1a1a2e, #16213e); border: 1px solid rgba(245,200,66,0.3); }
-  .cover-2 { background: linear-gradient(135deg, #0d1b2a, #1b2a3b); border: 1px solid rgba(100,180,255,0.3); }
-  .cover-3 { background: linear-gradient(135deg, #1a0a2e, #2d1a4e); border: 1px solid rgba(108,43,217,0.5); }
-  .cover-4 { background: linear-gradient(135deg, #0a2e1a, #1a4e2d); border: 1px solid rgba(39,168,90,0.4); }
+    h1 {
+      margin: 0 0 18px;
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.3rem, 5vw, 5rem);
+      line-height: 0.96;
+      letter-spacing: -0.06em;
+    }
 
-  .card-info { flex: 1; min-width: 0; }
-  .card-category {
-    font-size: 0.68rem;
-    color: var(--pi-violet);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    font-weight: 600;
-    margin-bottom: 5px;
-  }
-  .card-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1rem;
-    font-weight: 700;
-    line-height: 1.25;
-    margin-bottom: 6px;
-    color: #fff;
-  }
-  .card-desc {
-    font-size: 0.78rem;
-    color: var(--muted);
-    line-height: 1.5;
-    margin-bottom: 12px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
+    h1 .highlight {
+      background: linear-gradient(90deg, #f7d567, #e2b529);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
 
-  .card-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .price {
-    display: flex;
-    align-items: baseline;
-    gap: 4px;
-  }
-  .price-num {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: var(--gold);
-  }
-  .price-unit {
-    font-size: 0.75rem;
-    color: var(--gold-dim);
-    font-weight: 500;
-  }
+    .hero-copy p {
+      margin: 0;
+      max-width: 580px;
+      font-size: 1.04rem;
+      color: var(--muted);
+    }
 
-  .buy-btn {
-    background: linear-gradient(135deg, var(--pi-purple), var(--pi-violet));
-    color: #fff;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 12px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    font-family: 'DM Sans', sans-serif;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-  .buy-btn:hover { box-shadow: 0 4px 16px rgba(108,43,217,0.5); }
-  .buy-btn.gold-btn {
-    background: linear-gradient(135deg, #c9a227, #f5c842);
-    color: #1a0a2e;
-  }
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 28px;
+    }
 
-  .rating {
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    font-size: 0.72rem;
-    color: var(--muted);
-    margin-bottom: 4px;
-  }
-  .stars { color: var(--gold); letter-spacing: -2px; }
+    .primary-btn,
+    .secondary-btn,
+    .buy-btn,
+    .sell-btn,
+    .modal-pay-btn {
+      border: 0;
+      border-radius: 14px;
+      padding: 14px 22px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
 
-  /* ── HOW IT WORKS ── */
-  .how-section {
-    position: relative; z-index: 1;
-    padding: 0 20px 40px;
-  }
-  .how-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin-bottom: 20px;
-    text-align: center;
-  }
-  .steps {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  .step {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 14px 16px;
-  }
-  .step-num {
-    width: 36px; height: 36px;
-    background: linear-gradient(135deg, var(--pi-purple), var(--pi-violet));
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 700;
-    font-size: 0.9rem;
-    flex-shrink: 0;
-  }
-  .step-text { flex: 1; }
-  .step-text strong { display: block; font-size: 0.9rem; margin-bottom: 2px; }
-  .step-text span { font-size: 0.78rem; color: var(--muted); }
+    .primary-btn:hover,
+    .secondary-btn:hover,
+    .buy-btn:hover,
+    .sell-btn:hover,
+    .modal-pay-btn:hover {
+      transform: translateY(-2px);
+    }
 
-  /* ── SELL BANNER ── */
-  .sell-banner {
-    position: relative; z-index: 1;
-    margin: 0 20px 40px;
-    background: linear-gradient(135deg, rgba(245,200,66,0.12), rgba(108,43,217,0.15));
-    border: 1px solid rgba(245,200,66,0.3);
-    border-radius: 20px;
-    padding: 24px 20px;
-    text-align: center;
-  }
-  .sell-banner h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.2rem;
-    margin-bottom: 8px;
-  }
-  .sell-banner h3 em {
-    font-style: normal;
-    color: var(--gold);
-  }
-  .sell-banner p {
-    font-size: 0.82rem;
-    color: var(--muted);
-    margin-bottom: 16px;
-    line-height: 1.5;
-  }
-  .sell-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--gold);
-    color: #1a0a2e;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 14px;
-    font-size: 0.88rem;
-    font-weight: 700;
-    font-family: 'DM Sans', sans-serif;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .sell-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(245,200,66,0.3); }
+    .primary-btn {
+      background: linear-gradient(135deg, var(--purple), var(--purple-2));
+      color: white;
+      box-shadow: 0 14px 28px rgba(108, 43, 217, 0.38);
+    }
 
-  /* ── MODAL ── */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(8px);
-    z-index: 200;
-    align-items: flex-end;
-    justify-content: center;
-  }
-  .modal-overlay.open { display: flex; }
+    .secondary-btn {
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
 
-  .modal {
-    background: var(--pi-deep);
-    border: 1px solid var(--border);
-    border-radius: 24px 24px 0 0;
-    padding: 28px 24px 40px;
-    width: 100%;
-    max-width: 480px;
-    animation: slideUp 0.3s ease;
-  }
-  @keyframes slideUp {
-    from { transform: translateY(100%); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-  }
+    .hero-panel {
+      background: linear-gradient(180deg, rgba(108,43,217,0.12), rgba(18,8,32,0.4));
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
 
-  .modal-handle {
-    width: 40px; height: 4px;
-    background: var(--border);
-    border-radius: 2px;
-    margin: 0 auto 20px;
-  }
+    .mini-card {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
 
-  .modal-product {
-    display: flex;
-    gap: 14px;
-    margin-bottom: 20px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--border);
-  }
+    .mini-card + .mini-card {
+      margin-top: 16px;
+    }
 
-  .modal-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin-bottom: 4px;
-  }
-  .modal-price {
-    font-size: 1.5rem;
-    font-family: 'Playfair Display', serif;
-    color: var(--gold);
-    font-weight: 700;
-  }
-  .modal-price span { font-size: 0.9rem; color: var(--gold-dim); }
+    .mini-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
 
-  .modal-desc {
-    font-size: 0.82rem;
-    color: var(--muted);
-    line-height: 1.6;
-    margin-bottom: 24px;
-  }
+    .mini-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--gold);
+    }
 
-  .modal-pay-btn {
-    width: 100%;
-    background: linear-gradient(135deg, var(--pi-purple), var(--pi-violet));
-    color: #fff;
-    border: none;
-    padding: 16px;
-    border-radius: 16px;
-    font-size: 1rem;
-    font-weight: 700;
-    font-family: 'DM Sans', sans-serif;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: all 0.2s;
-    margin-bottom: 10px;
-  }
-  .modal-pay-btn:hover { box-shadow: 0 8px 24px rgba(108,43,217,0.5); }
-  .modal-cancel {
-    width: 100%;
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--muted);
-    padding: 12px;
-    border-radius: 14px;
-    font-size: 0.88rem;
-    font-family: 'DM Sans', sans-serif;
-    cursor: pointer;
-  }
+    .mini-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, rgba(108,43,217,0.22), rgba(139,69,240,0.35));
+      font-size: 1.4rem;
+      border: 1px solid var(--border);
+    }
 
-  /* ── TOAST ── */
-  .toast {
-    position: fixed;
-    bottom: 80px; left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background: #1e1e2e;
-    border: 1px solid var(--border);
-    padding: 12px 20px;
-    border-radius: 14px;
-    font-size: 0.82rem;
-    opacity: 0;
-    transition: all 0.3s;
-    z-index: 300;
-    white-space: nowrap;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .toast.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-  .toast.success { border-color: rgba(39,168,90,0.5); }
-  .toast.error { border-color: rgba(217,43,43,0.5); }
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0;
+      margin: 18px auto 40px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      background: rgba(108,43,217,0.06);
+    }
 
-  /* ── FOOTER ── */
-  footer {
-    position: relative; z-index: 1;
-    text-align: center;
-    padding: 20px;
-    border-top: 1px solid var(--border);
-    font-size: 0.72rem;
-    color: var(--muted);
-  }
-  footer a { color: var(--pi-violet); text-decoration: none; }
+    .stat {
+      padding: 22px 18px;
+      text-align: center;
+      border-right: 1px solid var(--border);
+    }
 
-  /* Loading spinner */
-  .spinner {
-    width: 16px; height: 16px;
-    border: 2px solid rgba(255,255,255,0.3);
-    border-top-color: #fff;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    display: none;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-</style>
+    .stat:last-child { border-right: 0; }
+
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      color: var(--gold);
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.68rem;
+    }
+
+    .section {
+      padding: 18px 0 14px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.5rem, 2vw, 2rem);
+      margin: 0;
+      letter-spacing: -0.04em;
+    }
+
+    .tag {
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 0.7rem;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--gold);
+      background: rgba(245, 200, 66, 0.08);
+      border: 1px solid rgba(245, 200, 66, 0.2);
+      font-weight: 700;
+    }
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      position: relative;
+      background: linear-gradient(145deg, rgba(108,43,217,0.08), rgba(26,10,46,0.74));
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      overflow: hidden;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(245, 200, 66, 0.35);
+    }
+
+    .card.featured {
+      border-color: rgba(245, 200, 66, 0.35);
+      background: linear-gradient(145deg, rgba(245,200,66,0.06), rgba(108,43,217,0.12));
+    }
+
+    .card.featured::before {
+      content: '★ FEATURED';
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      font-size: 0.62rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      background: var(--gold);
+      color: #1a0a2e;
+      border-radius: 8px;
+      padding: 5px 8px;
+    }
+
+    .card-inner {
+      display: flex;
+      gap: 18px;
+      padding: 22px;
+    }
+
+    .card-cover {
+      width: 92px;
+      height: 112px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      font-size: 2.1rem;
+      flex-shrink: 0;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .cover-1 { background: linear-gradient(135deg, #111827, #1d3557); }
+    .cover-2 { background: linear-gradient(135deg, #102a43, #1b4d6e); }
+    .cover-3 { background: linear-gradient(135deg, #1a0a2e, #3c1f63); }
+    .cover-4 { background: linear-gradient(135deg, #0a2e1a, #1d5b3d); }
+
+    .card-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .card-category {
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #cba5ff;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      line-height: 1.2;
+      margin-bottom: 8px;
+      color: white;
+    }
+
+    .rating {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 0.75rem;
+      margin-bottom: 10px;
+    }
+
+    .stars {
+      letter-spacing: 0.08em;
+      color: var(--gold);
+      font-size: 0.8rem;
+    }
+
+    .card-desc {
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.55;
+      margin-bottom: 16px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .price {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .price-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1;
+    }
+
+    .price-unit {
+      color: var(--gold-deep);
+      font-weight: 700;
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .buy-btn {
+      background: linear-gradient(135deg, var(--purple), var(--purple-2));
+      color: white;
+      padding: 10px 16px;
+      border-radius: 12px;
+      box-shadow: 0 12px 28px rgba(108, 43, 217, 0.35);
+    }
+
+    .buy-btn.gold-btn {
+      background: linear-gradient(135deg, #d1a32a, #f5c842);
+      color: #1a0a2e;
+      box-shadow: 0 12px 28px rgba(245, 200, 66, 0.22);
+    }
+
+    .how-section {
+      padding: 40px 0 10px;
+    }
+
+    .how-wrap {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 18px 18px 16px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(108,43,217,0.06);
+    }
+
+    .step-no {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--purple), var(--purple-2));
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .step h3 {
+      margin: 0 0 4px;
+      font-size: 0.95rem;
+    }
+
+    .step p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .banner {
+      margin: 42px auto 48px;
+      padding: 28px 22px;
+      text-align: center;
+      border-radius: 26px;
+      border: 1px solid rgba(245, 200, 66, 0.26);
+      background: linear-gradient(135deg, rgba(245,200,66,0.1), rgba(108,43,217,0.14));
+      box-shadow: var(--shadow);
+    }
+
+    .banner h3 {
+      margin: 0 0 8px;
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.5rem, 2vw, 2.2rem);
+      letter-spacing: -0.04em;
+    }
+
+    .banner h3 em {
+      color: var(--gold);
+      font-style: normal;
+    }
+
+    .banner p {
+      margin: 0 auto 18px;
+      max-width: 700px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .sell-btn {
+      background: linear-gradient(135deg, #d1a32a, #f5c842);
+      color: #1a0a2e;
+      padding: 12px 20px;
+      border-radius: 14px;
+      font-weight: 800;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 22px 0 36px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 0.8rem;
+    }
+
+    footer a {
+      color: #d9c6ff;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      background: rgba(8, 5, 15, 0.72);
+      backdrop-filter: blur(10px);
+      z-index: 40;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal {
+      width: min(480px, calc(100% - 16px));
+      background: linear-gradient(180deg, var(--bg-2), #160b26);
+      border: 1px solid var(--border);
+      border-radius: 26px 26px 0 0;
+      padding: 22px 24px 26px;
+      animation: slideUp 0.25s ease;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-handle {
+      width: 50px;
+      height: 4px;
+      background: rgba(255,255,255,0.25);
+      border-radius: 999px;
+      margin: 0 auto 18px;
+    }
+
+    .modal-product {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 18px;
+      margin-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+
+    .modal-price {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .modal-price span {
+      font-size: 0.9rem;
+      color: var(--gold-deep);
+      margin-left: 4px;
+    }
+
+    .modal-desc {
+      color: var(--muted);
+      margin-bottom: 22px;
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    .modal-pay-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: linear-gradient(135deg, var(--purple), var(--purple-2));
+      color: white;
+      padding: 15px 18px;
+      border-radius: 16px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      box-shadow: 0 14px 26px rgba(108, 43, 217, 0.35);
+    }
+
+    .modal-cancel {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      border-radius: 12px;
+      padding: 12px 18px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.25);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+      display: none;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(12px);
+      opacity: 0;
+      background: rgba(30, 30, 46, 0.94);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 18px;
+      z-index: 60;
+      color: white;
+      font-size: 0.82rem;
+      transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .toast.success { border-color: rgba(42, 201, 122, 0.5); }
+    .toast.error { border-color: rgba(255, 93, 93, 0.5); }
+
+    @media (max-width: 860px) {
+      .hero-shell,
+      .products,
+      .how-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .nav {
+        padding: 14px 0;
+      }
+
+      .connect-btn {
+        min-width: 0;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .stats-bar {
+        grid-template-columns: 1fr;
+      }
+
+      .stat {
+        border-right: 0;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .stat:last-child { border-bottom: 0; }
+
+      .card-inner,
+      .modal-product {
+        flex-direction: column;
+      }
+
+      .card-cover {
+        width: 100%;
+        height: 165px;
+      }
+    }
+  </style>
 </head>
 <body>
+  <header>
+    <div class="container nav">
+      <div class="brand" aria-label="Digital Market PI">
+        <div class="brand-mark">π</div>
+        <div>Digital <span>Market</span></div>
+      </div>
+      <button id="connect-btn" class="connect-btn" onclick="connectPi()">
+        <span>π</span>
+        <span id="btn-text">Connecter Pi</span>
+      </button>
+    </div>
+  </header>
 
-<!-- HEADER -->
-<header>
-  <div class="logo">
-    <div class="logo-pi">π</div>
-    Digital <span>Market</span>
-  </div>
-  <button id="connect-btn" onclick="connectPi()">
-    <span id="btn-icon">π</span>
-    <span id="btn-text">Connecter Pi</span>
-  </button>
-</header>
-
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-badge">🌍 Marketplace Africaine · Pi Network</div>
-  <h1>Achète &amp; Vends<br>avec <em>Pi Coin</em></h1>
-  <p>La première marketplace digitale d'Afrique de l'Ouest alimentée par Pi Network.</p>
-</div>
-
-<!-- STATS -->
-<div class="stats-bar">
-  <div class="stat">
-    <div class="stat-num">12+</div>
-    <div class="stat-label">Produits</div>
-  </div>
-  <div class="stat">
-    <div class="stat-num">Pi</div>
-    <div class="stat-label">Paiement</div>
-  </div>
-  <div class="stat">
-    <div class="stat-num">🌍</div>
-    <div class="stat-label">Afrique</div>
-  </div>
-</div>
-
-<!-- PRODUCTS -->
-<div class="section-header">
-  <div class="section-title">Produits Vedettes</div>
-  <div class="section-tag">Testnet</div>
-</div>
-
-<div class="products">
-
-  <!-- Card 1 - FEATURED (ton ebook) -->
-  <div class="card card-featured">
-    <div class="card-inner">
-      <div class="card-cover cover-1">🧠</div>
-      <div class="card-info">
-        <div class="card-category">Psychologie · Mindset</div>
-        <div class="card-title">Loi Mentale &amp; Succès</div>
-        <div class="rating"><span class="stars">★★★★★</span> 5.0 (24)</div>
-        <div class="card-desc">Maîtrise les lois psychologiques qui gouvernent le succès. Transforme ton mindset en 30 jours.</div>
-        <div class="card-footer">
-          <div class="price">
-            <span class="price-num">5</span>
-            <span class="price-unit">π</span>
+  <main class="container">
+    <section class="hero">
+      <div class="hero-shell">
+        <div class="hero-copy">
+          <div class="eyebrow">🌍 Marketplace Africaine · Pi Network</div>
+          <h1>Achète &amp; Vends<br>avec <span class="highlight">Pi Coin</span></h1>
+          <p>La première marketplace digitale d’Afrique de l’Ouest pensée pour les créateurs, les entrepreneurs et les apprenants qui veulent monétiser leurs connaissances en Pi Coin.</p>
+          <div class="cta-row">
+            <button class="primary-btn" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Découvrir les produits</button>
+            <button class="secondary-btn" onclick="showToast('🔜 Espace vendeur bientôt disponible !', 'success')">Devenir vendeur</button>
           </div>
-          <button class="buy-btn gold-btn" onclick="openModal(0)">
-            🛒 Acheter
-          </button>
+        </div>
+
+        <div class="hero-panel" aria-label="Informations rapides">
+          <div class="mini-card">
+            <div>
+              <div class="mini-label">Produits</div>
+              <div class="mini-value">12+</div>
+            </div>
+            <div class="mini-icon">📚</div>
+          </div>
+
+          <div class="mini-card">
+            <div>
+              <div class="mini-label">Paiement</div>
+              <div class="mini-value">Pi</div>
+            </div>
+            <div class="mini-icon">💳</div>
+          </div>
+
+          <div class="mini-card">
+            <div>
+              <div class="mini-label">Réseau</div>
+              <div class="mini-value">Afrique</div>
+            </div>
+            <div class="mini-icon">🌍</div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
+    </section>
 
-  <!-- Card 2 -->
-  <div class="card">
-    <div class="card-inner">
-      <div class="card-cover cover-2">💰</div>
-      <div class="card-info">
-        <div class="card-category">Finance · Digital</div>
-        <div class="card-title">Liberté Financière en Ligne</div>
-        <div class="rating"><span class="stars">★★★★★</span> 4.9 (18)</div>
-        <div class="card-desc">Stratégies concrètes pour générer des revenus digitaux depuis l'Afrique.</div>
-        <div class="card-footer">
-          <div class="price">
-            <span class="price-num">8</span>
-            <span class="price-unit">π</span>
+    <div class="stats-bar" aria-label="Statistiques">
+      <div class="stat">
+        <div class="stat-num">12+</div>
+        <div class="stat-label">Produits</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">Pi</div>
+        <div class="stat-label">Paiement</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">🌍</div>
+        <div class="stat-label">Afrique</div>
+      </div>
+    </div>
+
+    <section class="section" id="products">
+      <div class="section-head">
+        <h2 class="section-title">Produits Vedettes</h2>
+        <span class="tag">Testnet</span>
+      </div>
+
+      <div class="products">
+        <article class="card featured">
+          <div class="card-inner">
+            <div class="card-cover cover-1">🧠</div>
+            <div class="card-info">
+              <div class="card-category">Psychologie · Mindset</div>
+              <div class="card-title">Loi Mentale &amp; Succès</div>
+              <div class="rating"><span class="stars">★★★★★</span> 5.0 (24)</div>
+              <div class="card-desc">Maîtrise les lois psychologiques qui gouvernent le succès. Transforme ton mindset en 30 jours.</div>
+              <div class="card-footer">
+                <div class="price">
+                  <span class="price-num">5</span>
+                  <span class="price-unit">π</span>
+                </div>
+                <button class="buy-btn gold-btn" onclick="openModal(0)">🛒 Acheter</button>
+              </div>
+            </div>
           </div>
-          <button class="buy-btn" onclick="openModal(1)">🛒 Acheter</button>
+        </article>
+
+        <article class="card">
+          <div class="card-inner">
+            <div class="card-cover cover-2">💰</div>
+            <div class="card-info">
+              <div class="card-category">Finance · Digital</div>
+              <div class="card-title">Liberté Financière en Ligne</div>
+              <div class="rating"><span class="stars">★★★★★</span> 4.9 (18)</div>
+              <div class="card-desc">Stratégies concrètes pour générer des revenus digitaux depuis l’Afrique.</div>
+              <div class="card-footer">
+                <div class="price">
+                  <span class="price-num">8</span>
+                  <span class="price-unit">π</span>
+                </div>
+                <button class="buy-btn" onclick="openModal(1)">🛒 Acheter</button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-inner">
+            <div class="card-cover cover-3">🚀</div>
+            <div class="card-info">
+              <div class="card-category">Entrepreneuriat</div>
+              <div class="card-title">Freelance Afrique 2024</div>
+              <div class="rating"><span class="stars">★★★★☆</span> 4.7 (11)</div>
+              <div class="card-desc">Guide complet pour lancer ta carrière freelance depuis Bamako, Dakar ou Abidjan.</div>
+              <div class="card-footer">
+                <div class="price">
+                  <span class="price-num">6</span>
+                  <span class="price-unit">π</span>
+                </div>
+                <button class="buy-btn" onclick="openModal(2)">🛒 Acheter</button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-inner">
+            <div class="card-cover cover-4">📱</div>
+            <div class="card-info">
+              <div class="card-category">Marketing Digital</div>
+              <div class="card-title">TikTok pour Créateurs</div>
+              <div class="rating"><span class="stars">★★★★★</span> 5.0 (9)</div>
+              <div class="card-desc">Atteins 10K abonnés et monétise ton compte TikTok en 60 jours chrono.</div>
+              <div class="card-footer">
+                <div class="price">
+                  <span class="price-num">4</span>
+                  <span class="price-unit">π</span>
+                </div>
+                <button class="buy-btn" onclick="openModal(3)">🛒 Acheter</button>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="how-section">
+      <div class="section-head">
+        <h2 class="section-title">Comment ça marche ?</h2>
+      </div>
+
+      <div class="how-wrap">
+        <div class="step">
+          <div class="step-no">1</div>
+          <div>
+            <h3>Connecte ton wallet Pi</h3>
+            <p>Ouvre l’application Pi Network et autorise la connexion.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-no">2</div>
+          <div>
+            <h3>Choisis ton produit</h3>
+            <p>Ebooks, formations et guides — tout est disponible en Pi Coin.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-no">3</div>
+          <div>
+            <h3>Paie &amp; télécharge</h3>
+            <p>Transaction sécurisée et livraison instantanée.</p>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
+    </section>
 
-  <!-- Card 3 -->
-  <div class="card">
-    <div class="card-inner">
-      <div class="card-cover cover-3">🚀</div>
-      <div class="card-info">
-        <div class="card-category">Entrepreneuriat</div>
-        <div class="card-title">Freelance Afrique 2024</div>
-        <div class="rating"><span class="stars">★★★★☆</span> 4.7 (11)</div>
-        <div class="card-desc">Guide complet pour lancer ta carrière freelance depuis Bamako, Dakar ou Abidjan.</div>
-        <div class="card-footer">
-          <div class="price">
-            <span class="price-num">6</span>
-            <span class="price-unit">π</span>
-          </div>
-          <button class="buy-btn" onclick="openModal(2)">🛒 Acheter</button>
+    <section class="banner">
+      <h3>Tu veux <em>vendre</em> ici ?</h3>
+      <p>Rejoins les créateurs africains qui monétisent leurs connaissances avec Pi Coin et vendent leurs ressources numériques depuis une plateforme pensée pour l’écosystème local.</p>
+      <button class="sell-btn" onclick="showToast('🔜 Espace vendeur bientôt disponible !', 'success')">✨ Devenir vendeur</button>
+    </section>
+  </main>
+
+  <footer>
+    Digital Market PI · Testnet &nbsp;|&nbsp; <a href="#">Contact</a> &nbsp;|&nbsp; <a href="#">Conditions</a>
+  </footer>
+
+  <div class="modal-overlay" id="modal" onclick="closeModal(event)">
+    <div class="modal">
+      <div class="modal-handle"></div>
+      <div class="modal-product">
+        <div class="card-cover" id="modal-cover" style="width:80px;height:110px;border-radius:16px;display:grid;place-items:center;font-size:2.1rem;"></div>
+        <div>
+          <div class="card-category" id="modal-cat"></div>
+          <div class="modal-title" id="modal-title"></div>
+          <div class="modal-price"><span id="modal-price-num"></span> π</div>
         </div>
       </div>
+      <div class="modal-desc" id="modal-desc"></div>
+      <button class="modal-pay-btn" id="pay-btn" onclick="payWithPi()">
+        <div class="spinner" id="pay-spinner"></div>
+        <span id="pay-text">π Payer avec Pi</span>
+      </button>
+      <button class="modal-cancel" onclick="closeModal()">Annuler</button>
     </div>
   </div>
 
-  <!-- Card 4 -->
-  <div class="card">
-    <div class="card-inner">
-      <div class="card-cover cover-4">📱</div>
-      <div class="card-info">
-        <div class="card-category">Marketing Digital</div>
-        <div class="card-title">TikTok pour Créateurs</div>
-        <div class="rating"><span class="stars">★★★★★</span> 5.0 (9)</div>
-        <div class="card-desc">Atteins 10K abonnés et monétise ton compte TikTok en 60 jours chrono.</div>
-        <div class="card-footer">
-          <div class="price">
-            <span class="price-num">4</span>
-            <span class="price-unit">π</span>
-          </div>
-          <button class="buy-btn" onclick="openModal(3)">🛒 Acheter</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <div class="toast" id="toast"></div>
 
-</div>
+  <script>
+    const PRODUCTS = [
+      {
+        id: 'loi-mentale',
+        title: 'Loi Mentale & Succès',
+        category: 'Psychologie · Mindset',
+        price: 5,
+        desc: 'Maîtrise les 12 lois psychologiques qui gouvernent le succès. Transforme ton mindset en 30 jours avec des exercices pratiques et des stratégies éprouvées.',
+        cover: 'cover-1',
+        icon: '🧠'
+      },
+      {
+        id: 'liberte-financiere',
+        title: 'Liberté Financière en Ligne',
+        category: 'Finance · Digital',
+        price: 8,
+        desc: 'Stratégies concrètes pour générer des revenus digitaux depuis l’Afrique. Freelance, ebooks, dropshipping — tout est expliqué étape par étape.',
+        cover: 'cover-2',
+        icon: '💰'
+      },
+      {
+        id: 'freelance-afrique',
+        title: 'Freelance Afrique 2024',
+        category: 'Entrepreneuriat',
+        price: 6,
+        desc: 'Guide complet pour lancer ta carrière freelance depuis Bamako, Dakar ou Abidjan. Trouve tes premiers clients en 30 jours.',
+        cover: 'cover-3',
+        icon: '🚀'
+      },
+      {
+        id: 'tiktok-createurs',
+        title: 'TikTok pour Créateurs',
+        category: 'Marketing Digital',
+        price: 4,
+        desc: 'Atteins 10 000 abonnés et monétise ton compte TikTok en 60 jours. Stratégies de contenu, algorithme, monétisation — tout y est.',
+        cover: 'cover-4',
+        icon: '📱'
+      }
+    ];
 
-<!-- HOW IT WORKS -->
-<div class="how-section">
-  <div class="how-title">Comment ça marche ?</div>
-  <div class="steps">
-    <div class="step">
-      <div class="step-num">1</div>
-      <div class="step-text">
-        <strong>Connecte ton wallet Pi</strong>
-        <span>Ouvre l'app Pi Network et autorise la connexion</span>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <div class="step-text">
-        <strong>Choisis ton produit</strong>
-        <span>Ebooks, formations, guides — tout en Pi Coin</span>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <div class="step-text">
-        <strong>Paie en Pi &amp; télécharge</strong>
-        <span>Transaction sécurisée, livraison instantanée</span>
-      </div>
-    </div>
-  </div>
-</div>
+    let piUser = null;
+    let currentModalProduct = null;
 
-<!-- SELL BANNER -->
-<div class="sell-banner">
-  <h3>Tu veux <em>vendre</em> ici ?</h3>
-  <p>Rejoins les créateurs africains qui monétisent leurs connaissances avec Pi Coin.</p>
-  <button class="sell-btn" onclick="showToast('🔜 Espace vendeur bientôt disponible !', 'success')">
-    ✨ Devenir vendeur
-  </button>
-</div>
-
-<!-- FOOTER -->
-<footer>
-  Digital Market PI · Testnet &nbsp;|&nbsp; <a href="#">Contact</a> &nbsp;|&nbsp; <a href="#">Conditions</a>
-</footer>
-
-<!-- MODAL -->
-<div class="modal-overlay" id="modal" onclick="closeModal(event)">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-product">
-      <div class="card-cover" id="modal-cover" style="width:72px;height:96px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:2rem;"></div>
-      <div>
-        <div class="card-category" id="modal-cat"></div>
-        <div class="modal-title" id="modal-title"></div>
-        <div class="modal-price"><span id="modal-price-num"></span> <span>π</span></div>
-      </div>
-    </div>
-    <div class="modal-desc" id="modal-desc"></div>
-    <button class="modal-pay-btn" id="pay-btn" onclick="payWithPi()">
-      <div class="spinner" id="pay-spinner"></div>
-      <span id="pay-text">π Payer avec Pi</span>
-    </button>
-    <button class="modal-cancel" onclick="closeModal()">Annuler</button>
-  </div>
-</div>
-
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
-
-<script>
-  // ── PRODUCTS DATA ──
-  const PRODUCTS = [
-    {
-      id: 'loi-mentale',
-      title: 'Loi Mentale & Succès',
-      category: 'Psychologie · Mindset',
-      price: 5,
-      desc: 'Maîtrise les 12 lois psychologiques qui gouvernent le succès. Transforme ton mindset en 30 jours avec des exercices pratiques et des stratégies éprouvées.',
-      cover: 'cover-1',
-      icon: '🧠'
-    },
-    {
-      id: 'liberte-financiere',
-      title: 'Liberté Financière en Ligne',
-      category: 'Finance · Digital',
-      price: 8,
-      desc: 'Stratégies concrètes pour générer des revenus digitaux depuis l\'Afrique. Freelance, ebooks, dropshipping — tout est expliqué étape par étape.',
-      cover: 'cover-2',
-      icon: '💰'
-    },
-    {
-      id: 'freelance-afrique',
-      title: 'Freelance Afrique 2024',
-      category: 'Entrepreneuriat',
-      price: 6,
-      desc: 'Guide complet pour lancer ta carrière freelance depuis Bamako, Dakar ou Abidjan. Trouve tes premiers clients en 30 jours.',
-      cover: 'cover-3',
-      icon: '🚀'
-    },
-    {
-      id: 'tiktok-createurs',
-      title: 'TikTok pour Créateurs',
-      category: 'Marketing Digital',
-      price: 4,
-      desc: 'Atteins 10 000 abonnés et monétise ton compte TikTok en 60 jours. Stratégies de contenu, algorithme, monétisation — tout y est.',
-      cover: 'cover-4',
-      icon: '📱'
-    }
-  ];
-
-  let piUser = null;
-  let currentProduct = null;
-
-  // ── PI SDK INIT ──
-  function initPi() {
-    try {
-      Pi.init({ version: "2.0", sandbox: true });
-    } catch(e) {
-      console.log('Pi SDK non disponible (hors app Pi):', e.message);
-    }
-  }
-
-  // ── CONNECT PI ──
-  async function connectPi() {
-    const btn = document.getElementById('connect-btn');
-    if (piUser) return;
-
-    try {
-      const scopes = ['username', 'payments'];
-      const auth = await Pi.authenticate(scopes, onIncompletePayment);
-      piUser = auth.user;
-      btn.innerHTML = `✓ <span>${piUser.username}</span>`;
-      btn.classList.add('connected');
-      showToast(`✅ Connecté : @${piUser.username}`, 'success');
-    } catch(e) {
-      showToast('❌ Connexion annulée', 'error');
-    }
-  }
-
-  function onIncompletePayment(payment) {
-    // Gérer les paiements incomplets
-    console.log('Paiement incomplet:', payment);
-    Pi.currentPayment.complete(payment.identifier);
-  }
-
-  // ── MODAL ──
-  let currentModalProduct = null;
-
-  function openModal(idx) {
-    const p = PRODUCTS[idx];
-    currentModalProduct = p;
-
-    document.getElementById('modal-cover').className = `card-cover ${p.cover}`;
-    document.getElementById('modal-cover').textContent = p.icon;
-    document.getElementById('modal-cat').textContent = p.category;
-    document.getElementById('modal-title').textContent = p.title;
-    document.getElementById('modal-price-num').textContent = p.price;
-    document.getElementById('modal-desc').textContent = p.desc;
-    document.getElementById('pay-text').textContent = `π Payer ${p.price} Pi`;
-
-    document.getElementById('modal').classList.add('open');
-  }
-
-  function closeModal(e) {
-    if (!e || e.target === document.getElementById('modal') || !e.target.closest('.modal')) {
-      document.getElementById('modal').classList.remove('open');
-    }
-  }
-
-  // ── PAY WITH PI ──
-  async function payWithPi() {
-    if (!piUser) {
-      showToast('⚠️ Connecte d\'abord ton wallet Pi', 'error');
-      closeModal();
-      return;
+    function initPi() {
+      try {
+        Pi.init({ version: '2.0', sandbox: true });
+      } catch (e) {
+        console.log('Pi SDK non disponible (hors app Pi):', e.message);
+      }
     }
 
-    const p = currentModalProduct;
-    const spinner = document.getElementById('pay-spinner');
-    const payText = document.getElementById('pay-text');
+    async function connectPi() {
+      const btn = document.getElementById('connect-btn');
+      if (piUser) return;
 
-    spinner.style.display = 'block';
-    payText.textContent = 'Traitement...';
-
-    try {
-      const payment = await Pi.createPayment({
-        amount: p.price,
-        memo: `Achat: ${p.title}`,
-        metadata: { productId: p.id, buyer: piUser.username }
-      }, {
-        onReadyForServerApproval: (paymentId) => {
-          console.log('Prêt pour approbation:', paymentId);
-          // TODO: appeler ton serveur pour approuver
-        },
-        onReadyForServerCompletion: (paymentId, txid) => {
-          console.log('Paiement complété:', paymentId, txid);
-          spinner.style.display = 'none';
-          payText.textContent = `π Payer ${p.price} Pi`;
-          closeModal();
-          showToast(`✅ Achat réussi ! Téléchargement en cours...`, 'success');
-        },
-        onCancel: (paymentId) => {
-          spinner.style.display = 'none';
-          payText.textContent = `π Payer ${p.price} Pi`;
-          showToast('Paiement annulé', 'error');
-        },
-        onError: (error) => {
-          spinner.style.display = 'none';
-          payText.textContent = `π Payer ${p.price} Pi`;
-          showToast('Erreur de paiement : ' + error.message, 'error');
-        }
-      });
-    } catch(e) {
-      spinner.style.display = 'none';
-      payText.textContent = `π Payer ${p.price} Pi`;
-      // Mode demo (hors Pi Browser)
-      closeModal();
-      showToast(`🎉 [Démo] Achat de "${p.title}" simulé avec succès !`, 'success');
+      try {
+        const scopes = ['username', 'payments'];
+        const auth = await Pi.authenticate(scopes, onIncompletePayment);
+        piUser = auth.user;
+        document.getElementById('btn-text').textContent = `@${piUser.username}`;
+        btn.classList.add('connected');
+        showToast(`✅ Connecté : @${piUser.username}`, 'success');
+      } catch (e) {
+        showToast('❌ Connexion annulée', 'error');
+      }
     }
-  }
 
-  // ── TOAST ──
-  function showToast(msg, type = '') {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.className = `toast show ${type}`;
-    setTimeout(() => t.className = 'toast', 3000);
-  }
+    function onIncompletePayment(payment) {
+      console.log('Paiement incomplet:', payment);
+      Pi.currentPayment.complete(payment.identifier);
+    }
 
-  // ── INIT ──
-  window.onload = initPi;
-</script>
+    function openModal(idx) {
+      const p = PRODUCTS[idx];
+      currentModalProduct = p;
+
+      const cover = document.getElementById('modal-cover');
+      cover.className = `card-cover ${p.cover}`;
+      cover.textContent = p.icon;
+      document.getElementById('modal-cat').textContent = p.category;
+      document.getElementById('modal-title').textContent = p.title;
+      document.getElementById('modal-price-num').textContent = p.price;
+      document.getElementById('modal-desc').textContent = p.desc;
+      document.getElementById('pay-text').textContent = `π Payer ${p.price} Pi`;
+      document.getElementById('modal').classList.add('open');
+    }
+
+    function closeModal(e) {
+      if (!e || e.target === document.getElementById('modal') || !e.target.closest('.modal')) {
+        document.getElementById('modal').classList.remove('open');
+      }
+    }
+
+    async function payWithPi() {
+      if (!piUser) {
+        showToast('⚠️ Connecte d’abord ton wallet Pi', 'error');
+        closeModal();
+        return;
+      }
+
+      const p = currentModalProduct;
+      const spinner = document.getElementById('pay-spinner');
+      const payText = document.getElementById('pay-text');
+
+      spinner.style.display = 'block';
+      payText.textContent = 'Traitement...';
+
+      try {
+        await Pi.createPayment({
+          amount: p.price,
+          memo: `Achat: ${p.title}`,
+          metadata: { productId: p.id, buyer: piUser.username }
+        }, {
+          onReadyForServerApproval: (paymentId) => {
+            console.log('Prêt pour approbation:', paymentId);
+          },
+          onReadyForServerCompletion: (paymentId, txid) => {
+            console.log('Paiement complété:', paymentId, txid);
+            spinner.style.display = 'none';
+            payText.textContent = `π Payer ${p.price} Pi`;
+            closeModal();
+            showToast('✅ Achat réussi ! Téléchargement en cours...', 'success');
+          },
+          onCancel: () => {
+            spinner.style.display = 'none';
+            payText.textContent = `π Payer ${p.price} Pi`;
+            showToast('Paiement annulé', 'error');
+          },
+          onError: (error) => {
+            spinner.style.display = 'none';
+            payText.textContent = `π Payer ${p.price} Pi`;
+            showToast('Erreur de paiement : ' + error.message, 'error');
+          }
+        });
+      } catch (e) {
+        spinner.style.display = 'none';
+        payText.textContent = `π Payer ${p.price} Pi`;
+        closeModal();
+        showToast(`🎉 [Démo] Achat de "${p.title}" simulé avec succès !`, 'success');
+      }
+    }
+
+    function showToast(msg, type = '') {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = `toast show ${type}`;
+      setTimeout(() => t.className = 'toast', 3000);
+    }
+
+    window.onload = initPi;
+  </script>
 </body>
 </html>
